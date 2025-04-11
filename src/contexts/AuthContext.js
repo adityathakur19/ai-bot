@@ -66,20 +66,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const googleLogin = async (credentialResponse) => {
-    try {
-      const res = await api.post('/auth/google', { 
-        tokenId: credentialResponse.credential
-      });
-      localStorage.setItem('token', res.data.token);
-      setAuthToken(res.data.token);
-      await loadUser();
-      return true;
-    } catch (err) {
-      setError(err.response?.data?.msg || 'Google login failed');
-      return false;
-    }
-  };
+const googleLogin = async (credentialResponse) => {
+  try {
+    console.log('Credential response:', credentialResponse);
+    
+    const res = await api.post('/auth/google', { 
+      credential: credentialResponse.credential
+    });
+    
+    localStorage.setItem('token', res.data.token);
+    setAuthToken(res.data.token);
+    await loadUser();
+    return true;
+  } catch (err) {
+    console.error('Google login error:', err.response?.data || err.message);
+    setError(err.response?.data?.msg || 'Google login failed');
+    return false;
+  }
+};
 
   const loadUser = async () => {
     try {
